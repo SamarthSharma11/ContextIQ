@@ -34,12 +34,9 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-canvas flex flex-col justify-center items-center p-4">
-      {/* Brand icon */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 rounded-3xl bg-ink text-coral-400 flex items-center justify-center font-bold shadow-lg">
-          <Sparkles className="w-6 h-6" />
-        </div>
-        <span className="text-2xl font-black tracking-tight text-ink font-display">ContextIQ</span>
+      {/* Brand logo */}
+      <div className="flex flex-col items-center mb-6">
+        <img src="/logo.png" alt="ContextIQ" className="h-28 object-contain drop-shadow-md" />
       </div>
 
       <div className="w-full max-w-md bg-surface rounded-3xl border border-line p-8 md:p-10 shadow-xl">

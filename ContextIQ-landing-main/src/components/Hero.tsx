@@ -42,15 +42,20 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* Oversized Wordmark behind 3D Mascot with cursor tilt */}
+        {/* Oversized Logo behind 3D Mascot with cursor tilt */}
         <div className="relative mt-8 select-none flex flex-col items-center justify-center">
-          <h1 className="pointer-events-none absolute inset-x-0 -top-8 text-center text-[15vw] sm:text-[13vw] md:text-[11vw] font-black leading-none tracking-tighter text-ink opacity-[0.92] font-display">
-            ContextIQ
-          </h1>
+          {/* Official Logo Image (replaces text wordmark) */}
+          <div className="pointer-events-none absolute inset-x-0 -top-10 flex justify-center">
+            <img
+              src="/logo.png"
+              alt="ContextIQ"
+              className="w-[55vw] sm:w-[44vw] md:w-[38vw] max-w-lg object-contain opacity-[0.88]"
+            />
+          </div>
 
           {/* 3D Mascot Stage with Cursor Tilt */}
           <div
-            className="relative flex justify-center pt-8 sm:pt-12 transition-transform duration-200 ease-out"
+            className="relative flex justify-center pt-28 sm:pt-36 md:pt-32 transition-transform duration-200 ease-out"
             style={{
               transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
             }}

@@ -95,9 +95,7 @@ export const AppShell: React.FC = () => {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-surface border-b border-line">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-ink text-coral-400 flex items-center justify-center font-bold">
-            <Sparkles className="w-4 h-4" />
-          </div>
+          <img src="/logo-icon.png" alt="ContextIQ" className="w-8 h-8 rounded-xl object-contain shadow-sm" />
           <span className="font-bold text-ink font-display">{tenant.name}</span>
         </div>
         <button
@@ -117,9 +115,11 @@ export const AppShell: React.FC = () => {
         {/* Workspace Brand Block */}
         <div className="pb-5 mb-5 border-b border-line">
           <Link to="/app/overview" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-2xl bg-ink text-coral-400 flex items-center justify-center font-bold shadow-sm transition-transform group-hover:scale-105">
-              <Sparkles className="w-5 h-5" />
-            </div>
+            <img
+              src="/logo-icon.png"
+              alt="ContextIQ"
+              className="w-10 h-10 rounded-2xl object-contain shadow-sm transition-transform group-hover:scale-105"
+            />
             <div className="overflow-hidden">
               <h2 className="font-bold text-ink font-display text-sm truncate leading-tight">
                 {tenant.name}

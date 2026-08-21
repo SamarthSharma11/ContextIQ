@@ -28,11 +28,13 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 md:px-8">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-coral-400 shadow-sm">
-            <Sparkles className="h-5 w-5" />
-          </span>
-          <span className="text-lg font-extrabold tracking-tight text-ink">ContextIQ</span>
+        <a href="#top" className="flex items-center gap-2.5 group">
+          <img
+            src="/logo-icon.png"
+            alt="ContextIQ"
+            className="h-9 w-9 object-contain drop-shadow-sm transition-transform group-hover:scale-105"
+          />
+          <span className="text-xl font-extrabold tracking-tight text-ink font-display">ContextIQ</span>
         </a>
 
         <div className="hidden items-center gap-1 md:flex">

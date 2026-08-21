@@ -1,0 +1,19 @@
+{
+  "name": "contextiq",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ContextIQ — Multi-tenant SaaS Platform for Custom AI Chatbots",
+  "scripts": {
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "build:widget": "cd widget && npx vite build",
+    "build": "npm run build:server && npm run build:client && npm run build:widget"
+  },
+  "workspaces": [
+    "server",
+    "client",
+    "widget"
+  ]
+}

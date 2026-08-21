@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #ECECEC;
+    color: #17171A;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Poppins', 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #DCDCDC;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8B8BD;
+}
+
+/* Card & Surface styles per Design Doc */
+.bg-canvas {
+  background-color: #ECECEC;
+}
+
+.card-frame {
+  background: #F7F7F7;
+  border: 1px solid #DCDCDC;
+  border-radius: 1.5rem;
+}
+
+.surface-white {
+  background: #FFFFFF;
+  border: 1px solid rgba(23, 23, 26, 0.08);
+}

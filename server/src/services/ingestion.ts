@@ -19,9 +19,48 @@ export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
 }
 
 /**
+ * Validate URL to prevent SSRF attacks against internal network metadata
+ */
+export function validatePublicUrl(targetUrl: string): void {
+  let parsed: URL;
+  try {
+    parsed = new URL(targetUrl);
+  } catch (e) {
+    throw new Error('Invalid URL format');
+  }
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    throw new Error('Only HTTP and HTTPS protocols are supported');
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+
+  // Block loopback and local hostnames
+  if (['localhost', '127.0.0.1', '::1', '0.0.0.0'].includes(hostname) || hostname.endsWith('.local')) {
+    throw new Error('Access to local/private network addresses is blocked for security');
+  }
+
+  // Block cloud metadata services (AWS/GCP/Azure link-local 169.254.169.254)
+  if (hostname === '169.254.169.254' || hostname.startsWith('169.254.')) {
+    throw new Error('Access to cloud instance metadata services is prohibited');
+  }
+
+  // Block RFC 1918 private subnets
+  if (
+    hostname.startsWith('10.') ||
+    hostname.startsWith('192.168.') ||
+    /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname)
+  ) {
+    throw new Error('Access to private RFC1918 internal IP ranges is blocked');
+  }
+}
+
+/**
  * Fetch and extract text from a Web URL
  */
 export async function extractTextFromURL(url: string): Promise<{ text: string; title: string }> {
+  validatePublicUrl(url);
+
   const response = await fetch(url, {
     headers: {
       'User-Agent': 'ContextIQ-Bot/1.0 (+https://contextiq.ai)',

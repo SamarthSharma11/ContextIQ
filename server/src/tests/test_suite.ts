@@ -30,7 +30,7 @@ async function main() {
     const chunks = splitTextIntoChunks(sampleText, 500, 50);
 
     assert(chunks.length > 1, `Expected multiple chunks, got ${chunks.length}`);
-    assert(chunks[0].chunkIndex === 0 || chunks[0].index === 0, 'First chunk must have index 0');
+    assert(chunks[0].index === 0, 'First chunk must have index 0');
     assert(chunks[0].tokenCount > 0, 'Token count must be greater than 0');
     assert(chunks[0].text.length > 0, 'Chunk text must not be empty');
   });
@@ -61,12 +61,12 @@ async function main() {
 
   console.log('\n🛡️ 3. Cross-Tenant Data Isolation Logic:');
   await runTest('Pinecone namespace must strictly match tenant slug', () => {
-    const tenantA_slug = 'acme-corp';
-    const tenantB_slug = 'globex-inc';
+    const tenantA_slug: string = 'acme-corp';
+    const tenantB_slug: string = 'globex-inc';
 
     assert.notStrictEqual(tenantA_slug, tenantB_slug, 'Tenant namespaces must be distinct');
-    const namespaceA = `tenant_${tenantA_slug}`;
-    const namespaceB = `tenant_${tenantB_slug}`;
+    const namespaceA: string = `tenant_${tenantA_slug}`;
+    const namespaceB: string = `tenant_${tenantB_slug}`;
     assert(namespaceA !== namespaceB, 'Namespaces must never overlap');
   });
 

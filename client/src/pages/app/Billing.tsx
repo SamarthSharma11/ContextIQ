@@ -31,13 +31,23 @@ export const Billing: React.FC = () => {
   const handleUpgrade = async (planKey: string) => {
     setUpgrading(planKey);
     try {
-      await apiRequest('/billing/upgrade', {
-        method: 'POST',
-        body: JSON.stringify({ plan: planKey }),
-      });
+      const res = await apiRequest<{ url?: string; simulated?: boolean; message?: string }>(
+        '/billing/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({ plan: planKey }),
+        }
+      );
+
+      if (res.url) {
+        // Redirect to Stripe Hosted Checkout
+        window.location.href = res.url;
+        return;
+      }
+
       await refreshSession();
       await fetchBilling();
-      alert(`Plan successfully updated to ${planKey.toUpperCase()}!`);
+      alert(res.message || `Plan successfully upgraded to ${planKey.toUpperCase()}!`);
     } catch (err: any) {
       alert(err.message || 'Upgrade failed');
     } finally {

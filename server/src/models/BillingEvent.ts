@@ -21,6 +21,4 @@ const BillingEventSchema = new Schema<IBillingEvent>(
   }
 );
 
-BillingEventSchema.index({ stripeEventId: 1 }, { unique: true });
-
 export const BillingEvent = mongoose.model<IBillingEvent>('BillingEvent', BillingEventSchema);

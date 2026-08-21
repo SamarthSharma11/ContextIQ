@@ -94,52 +94,62 @@ router.post(
 
 /**
  * GET /api/sources
- * List all knowledge sources for the tenant
+ * List all knowledge sources for the tenant (owner, admin, editor only per App Flow §5)
  */
-router.get('/', authenticateJWT, async (req: Request, res: Response): Promise<void> => {
-  try {
-    const sources = await Source.find({ tenantId: req.tenantId })
-      .sort({ createdAt: -1 })
-      .lean();
+router.get(
+  '/',
+  authenticateJWT,
+  requireRole('owner', 'admin', 'editor'),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const sources = await Source.find({ tenantId: req.tenantId })
+        .sort({ createdAt: -1 })
+        .lean();
 
-    res.json(sources);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+      res.json(sources);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   }
-});
+);
 
 /**
  * GET /api/sources/:id
- * Get single source details and its chunk previews
+ * Get single source details and its chunk previews (owner, admin, editor only)
  */
-router.get('/:id', authenticateJWT, async (req: Request, res: Response): Promise<void> => {
-  try {
-    const source = await Source.findOne({
-      _id: req.params.id,
-      tenantId: req.tenantId,
-    });
+router.get(
+  '/:id',
+  authenticateJWT,
+  requireRole('owner', 'admin', 'editor'),
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const source = await Source.findOne({
+        _id: req.params.id,
+        tenantId: req.tenantId,
+      });
 
-    if (!source) {
-      res.status(404).json({ error: 'Source not found' });
-      return;
+      if (!source) {
+        res.status(404).json({ error: 'Source not found' });
+        return;
+      }
+
+      const chunks = await Chunk.find({
+        sourceId: source._id,
+        tenantId: req.tenantId,
+      })
+        .sort({ chunkIndex: 1 })
+        .select('chunkIndex text tokenCount vectorId createdAt')
+        .lean();
+
+      res.json({
+        source,
+        chunks,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-
-    const chunks = await Chunk.find({
-      sourceId: source._id,
-      tenantId: req.tenantId,
-    })
-      .sort({ chunkIndex: 1 })
-      .select('chunkIndex text tokenCount vectorId createdAt')
-      .lean();
-
-    res.json({
-      source,
-      chunks,
-    });
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
   }
-});
+);
 
 /**
  * DELETE /api/sources/:id

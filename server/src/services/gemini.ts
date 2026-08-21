@@ -14,19 +14,29 @@ export function getGeminiClient(): GoogleGenerativeAI {
 }
 
 /**
- * Generate embedding vector for a given text.
- * Truncates or formats to target dimension (e.g. 1536 if supported or 768 standard).
+ * Generate embedding vector for a given text using gemini-embedding-001 with 1536 dimensions.
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   const client = getGeminiClient();
-  // We try text-embedding-004 / gemini-embedding-001
-  const model = client.getGenerativeModel({ model: 'text-embedding-004' });
-  
-  const result = await model.embedContent(text);
-  const values = result.embedding.values;
-  
-  // If target index expects 1536 dimensions and model returned 768, we can pad or if model returned 3072 truncate
-  // If needed, match dimensions. Let's ensure standard float array is returned.
+  const model = client.getGenerativeModel({ model: 'gemini-embedding-001' });
+
+  const result = await model.embedContent({
+    content: {
+      role: 'user',
+      parts: [{ text }],
+    },
+    outputDimensionality: 1536,
+  } as any);
+
+  let values = result.embedding.values;
+
+  // Guarantee exact 1536 dimensionality matching Pinecone index configuration
+  if (values.length < 1536) {
+    values = [...values, ...new Array(1536 - values.length).fill(0)];
+  } else if (values.length > 1536) {
+    values = values.slice(0, 1536);
+  }
+
   return values;
 }
 
@@ -35,7 +45,6 @@ export async function generateEmbedding(text: string): Promise<number[]> {
  */
 export async function generateEmbeddingsBatch(texts: string[]): Promise<number[][]> {
   const embeddings: number[][] = [];
-  // Run sequentially or in small batches to respect rate limits
   for (const text of texts) {
     const embedding = await generateEmbedding(text);
     embeddings.push(embedding);
@@ -53,10 +62,6 @@ export async function generateChatCompletion(params: {
   history?: Array<{ role: 'user' | 'assistant'; content: string }>;
 }): Promise<{ text: string; tokensUsed: number }> {
   const client = getGeminiClient();
-  const model = client.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    systemInstruction: params.systemPrompt,
-  });
 
   const formattedContext = params.contextChunks
     .map((chunk, idx) => `[Source ${idx + 1}]:\n${chunk}`)
@@ -76,7 +81,6 @@ Instructions:
 - Always remain helpful, professional, and grounded in the provided sources.
 `;
 
-  // Build history if available
   const contents = [];
   if (params.history && params.history.length > 0) {
     for (const msg of params.history) {
@@ -87,23 +91,41 @@ Instructions:
     }
   }
 
-  // Add the current prompt
   contents.push({
     role: 'user',
     parts: [{ text: fullUserPrompt }],
   });
 
-  const chat = model.startChat();
-  const result = await model.generateContent({
-    contents,
-  });
+  // Try preferred model list with automatic graceful fallback
+  const candidateModels = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-3.6-flash'];
+  let lastError: any = null;
 
-  const response = result.response;
-  const text = response.text();
-  const totalTokens = response.usageMetadata?.totalTokenCount || Math.ceil((fullUserPrompt.length + text.length) / 4);
+  for (const modelName of candidateModels) {
+    try {
+      const model = client.getGenerativeModel({
+        model: modelName,
+        systemInstruction: params.systemPrompt,
+      });
 
-  return {
-    text,
-    tokensUsed: totalTokens,
-  };
+      const result = await model.generateContent({
+        contents,
+      });
+
+      const response = result.response;
+      const text = response.text();
+      const totalTokens =
+        response.usageMetadata?.totalTokenCount ||
+        Math.ceil((fullUserPrompt.length + text.length) / 4);
+
+      return {
+        text,
+        tokensUsed: totalTokens,
+      };
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`[Gemini Chat] Model ${modelName} failed, attempting next candidate:`, err.message);
+    }
+  }
+
+  throw new Error(`All candidate Gemini models failed: ${lastError?.message}`);
 }

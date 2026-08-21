@@ -40,7 +40,6 @@ const InviteSchema = new Schema<IInvite>(
   { timestamps: true }
 );
 
-InviteSchema.index({ token: 1 }, { unique: true });
 InviteSchema.index({ tenantId: 1, email: 1 });
 
 export const Invite = mongoose.model<IInvite>('Invite', InviteSchema);

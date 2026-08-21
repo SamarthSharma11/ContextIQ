@@ -58,6 +58,4 @@ const TenantSchema = new Schema<ITenant>(
   { timestamps: true }
 );
 
-TenantSchema.index({ slug: 1 }, { unique: true });
-
 export const Tenant = mongoose.model<ITenant>('Tenant', TenantSchema);

@@ -1,5 +1,3 @@
-import { Sparkles } from 'lucide-react';
-
 const groups = [
   {
     title: 'Product',
@@ -24,16 +22,19 @@ export default function Footer() {
     <footer className="border-t border-ink/10 bg-white/60">
       <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-6">
+          {/* Brand with official logo */}
           <div className="col-span-2">
-            <a href="#top" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-coral-400">
-                <Sparkles className="h-5 w-5" />
-              </span>
-              <span className="text-lg font-extrabold tracking-tight text-ink">ContextIQ</span>
+            <a href="#top" className="inline-flex items-center gap-3 group">
+              <img
+                src="/logo.png"
+                alt="ContextIQ"
+                className="h-14 object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-sm"
+              />
             </a>
-            <p className="mt-3 max-w-xs text-sm text-ink/55">
+            <p className="mt-3 max-w-xs text-sm text-ink/55 leading-relaxed">
               Custom AI chatbots grounded in your company knowledge. Trusted answers, in seconds.
             </p>
+            <p className="mt-3 text-xs font-semibold text-ink/40 tracking-wide uppercase">Your data. Smarter answers.</p>
           </div>
 
           {groups.map((g) => (

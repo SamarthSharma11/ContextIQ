@@ -50,11 +50,14 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <a href="#" className="text-sm font-medium text-ink/70 hover:text-ink transition-colors">
+          <a
+            href="http://localhost:5173/login"
+            className="text-sm font-medium text-ink/70 hover:text-ink transition-colors"
+          >
             Sign in
           </a>
           <a
-            href="#cta"
+            href="http://localhost:5173/signup"
             className="rounded-full bg-coral-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-coral-600 hover:shadow-md active:scale-95"
           >
             Get started

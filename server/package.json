@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest --runInBand"
+    "test": "ts-node-dev --transpile-only src/tests/test_suite.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

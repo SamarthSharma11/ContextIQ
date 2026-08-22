@@ -4,12 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════════════════ */
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
-    /* Smooth theme transitions */
     transition: background-color 0.25s ease, color 0.25s ease;
   }
 
@@ -19,7 +21,7 @@
     font-family: 'Inter', system-ui, sans-serif;
   }
 
-  /* ── Dark mode body ── */
+  /* Dark mode body */
   html.dark body {
     background-color: #0E0E11;
     color: #F0F0F5;
@@ -29,7 +31,6 @@
     font-family: 'Poppins', 'Inter', system-ui, sans-serif;
   }
 
-  /* Accessible focus rings for keyboard navigation */
   :focus-visible {
     outline: 2px solid #E8675F;
     outline-offset: 2px;
@@ -37,7 +38,9 @@
   }
 }
 
-/* ─── Smooth Scrollbar ─── */
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #DCDCDC; border-radius: 9999px; }
@@ -46,48 +49,72 @@
 html.dark ::-webkit-scrollbar-thumb { background: #2B2B36; }
 html.dark ::-webkit-scrollbar-thumb:hover { background: #3A3A4A; }
 
-/* ─── Surface Tokens per Design Doc ─── */
-.bg-canvas   { background-color: #ECECEC; }
-.card-frame  { background: #F7F7F7; border: 1px solid #DCDCDC; border-radius: 1.5rem; }
-.surface-white { background: #FFFFFF; border: 1px solid rgba(23, 23, 26, 0.08); }
+/* ═══════════════════════════════════════════════════════════
+   SURFACE UTILITY TOKENS
+═══════════════════════════════════════════════════════════ */
+.bg-canvas    { background-color: #ECECEC; }
+.card-frame   { background: #F7F7F7; border: 1px solid #DCDCDC; border-radius: 1.5rem; }
+.surface-white { background: #FFFFFF; border: 1px solid rgba(23,23,26,0.08); }
 
-/* Dark surface tokens */
-html.dark .bg-canvas    { background-color: #0E0E11; }
+html.dark .bg-canvas    { background-color: #0E0E11 !important; }
+html.dark .bg-card      { background-color: #1A1A22 !important; }
+html.dark .bg-surface   { background-color: #18181E !important; }
 html.dark .card-frame   { background: #1A1A22; border-color: #2B2B36; }
 html.dark .surface-white { background: #18181E; border-color: rgba(255,255,255,0.06); }
 
-/* ─── Tailwind bg-canvas, bg-card, bg-surface — dark overrides ─── */
-html.dark .bg-canvas  { background-color: #0E0E11 !important; }
-html.dark .bg-card    { background-color: #1A1A22 !important; }
-html.dark .bg-surface { background-color: #18181E !important; }
+/* ─── Inline bg-white used inside dashboard cards ─── */
+html.dark .bg-white { background-color: #1A1A22 !important; }
 
-/* ─── Text colour dark overrides ─── */
+/* ═══════════════════════════════════════════════════════════
+   TEXT COLOUR — DARK OVERRIDES
+═══════════════════════════════════════════════════════════ */
 html.dark .text-ink          { color: #F0F0F5 !important; }
 html.dark .text-ink-secondary { color: #C8C8D4 !important; }
 html.dark .text-ink-muted    { color: #9E9EA8 !important; }
 html.dark .text-ink-light    { color: #6B6B78 !important; }
 
-/* ─── Border dark overrides ─── */
-html.dark .border-line { border-color: #2B2B36 !important; }
+/* ─── Generic text colours that turn invisible in dark mode ─── */
+html.dark .text-gray-900,
+html.dark .text-gray-800,
+html.dark .text-gray-700 { color: #E8E8F0 !important; }
 
-/* ─── Coral accent dark ─── */
+html.dark .text-gray-600,
+html.dark .text-gray-500 { color: #9E9EA8 !important; }
+
+html.dark .text-gray-400,
+html.dark .text-gray-300 { color: #6B6B78 !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   BORDER — DARK OVERRIDES
+═══════════════════════════════════════════════════════════ */
+html.dark .border-line { border-color: #2B2B36 !important; }
+html.dark .border-gray-200,
+html.dark .border-gray-300 { border-color: #2B2B36 !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   CORAL ACCENT — DARK
+═══════════════════════════════════════════════════════════ */
 html.dark .bg-coral-50  { background-color: #2A1A19 !important; }
 html.dark .text-coral-600 { color: #FF7B73 !important; }
 
-/* ─── Card Hover Lift Micro-Animation ─── */
+/* ═══════════════════════════════════════════════════════════
+   CARD HOVER LIFT
+═══════════════════════════════════════════════════════════ */
 .card-hover {
   transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(23, 23, 26, 0.08);
+  box-shadow: 0 8px 24px rgba(23,23,26,0.08);
 }
 html.dark .card-hover:hover {
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.40);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
 }
 
-/* ─── Skeleton Loading Pulse ─── */
+/* ═══════════════════════════════════════════════════════════
+   SKELETON
+═══════════════════════════════════════════════════════════ */
 .skeleton {
   background: linear-gradient(90deg, #DCDCDC 25%, #ECECEC 50%, #DCDCDC 75%);
   background-size: 200% 100%;
@@ -103,7 +130,9 @@ html.dark .skeleton {
   100% { background-position: -200% 0; }
 }
 
-/* ─── Fade-in / Slide-up Entry ─── */
+/* ═══════════════════════════════════════════════════════════
+   FADE / SLIDE ANIMATION
+═══════════════════════════════════════════════════════════ */
 @keyframes fadeSlideUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -112,15 +141,19 @@ html.dark .skeleton {
   animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ─── Coral Button Glow on Hover ─── */
+/* ═══════════════════════════════════════════════════════════
+   BUTTON GLOW
+═══════════════════════════════════════════════════════════ */
 .btn-coral-glow:hover {
-  box-shadow: 0 4px 18px rgba(232, 103, 95, 0.35);
+  box-shadow: 0 4px 18px rgba(232,103,95,0.35);
 }
 html.dark .btn-coral-glow:hover {
-  box-shadow: 0 4px 24px rgba(255, 107, 99, 0.45);
+  box-shadow: 0 4px 24px rgba(255,107,99,0.45);
 }
 
-/* ─── Shimmer Text (re-used from landing) ─── */
+/* ═══════════════════════════════════════════════════════════
+   SHIMMER TEXT
+═══════════════════════════════════════════════════════════ */
 .shimmer-text {
   background: linear-gradient(90deg, #17171A 0%, #E8675F 50%, #17171A 100%);
   background-size: 200% auto;
@@ -140,20 +173,60 @@ html.dark .shimmer-text {
   to { background-position: 200% center; }
 }
 
-/* ─── Input / Form dark ─── */
+/* ═══════════════════════════════════════════════════════════
+   INPUTS / FORMS — DARK
+═══════════════════════════════════════════════════════════ */
 html.dark input,
 html.dark textarea,
 html.dark select {
-  background-color: #1A1A22;
-  border-color: #2B2B36;
-  color: #F0F0F5;
+  background-color: #1A1A22 !important;
+  border-color: #2B2B36 !important;
+  color: #F0F0F5 !important;
 }
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: #6B6B78;
+  color: #6B6B78 !important;
 }
 
-/* ─── Reduced Motion Overrides ─── */
+/* ═══════════════════════════════════════════════════════════
+   QUICK-ACTION LINKS inside dashboard — dark hover
+═══════════════════════════════════════════════════════════ */
+html.dark .hover\:bg-coral-50\/50:hover { background-color: rgba(42,26,25,0.6) !important; }
+html.dark .hover\:border-coral-300:hover { border-color: #7A3530 !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   FORCE-LIGHT — Landing page is ALWAYS light
+   Overrides any .dark selectors when this class is present
+═══════════════════════════════════════════════════════════ */
+html.dark .force-light,
+html.dark .force-light * {
+  /* Reset colours for every element inside the landing wrapper */
+  --tw-text-opacity: 1;
+}
+
+/* Override bg/text back to light values inside force-light */
+html.dark .force-light { background-color: #ECECEC !important; color: #17171A !important; }
+html.dark .force-light .bg-canvas    { background-color: #ECECEC !important; }
+html.dark .force-light .bg-card      { background-color: #F7F7F7 !important; }
+html.dark .force-light .bg-surface   { background-color: #FFFFFF !important; }
+html.dark .force-light .bg-white     { background-color: #FFFFFF !important; }
+html.dark .force-light .border-line  { border-color: #DCDCDC !important; }
+html.dark .force-light .text-ink     { color: #17171A !important; }
+html.dark .force-light .text-ink-muted { color: #6B6B70 !important; }
+html.dark .force-light .text-ink-light  { color: #A0A0A5 !important; }
+html.dark .force-light .text-gray-900,
+html.dark .force-light .text-gray-800,
+html.dark .force-light .text-gray-700 { color: #17171A !important; }
+html.dark .force-light .text-gray-600,
+html.dark .force-light .text-gray-500 { color: #6B6B70 !important; }
+html.dark .force-light .skeleton {
+  background: linear-gradient(90deg, #DCDCDC 25%, #ECECEC 50%, #DCDCDC 75%) !important;
+  background-size: 200% 100% !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION
+═══════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   .animate-in,
   .card-hover,

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useActiveSection } from '../../hooks/useActiveSection';
-import { ThemeToggle } from '../ui/ThemeToggle';
 
 const links = [
   { id: 'product', label: 'Product' },
@@ -56,10 +55,9 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <ThemeToggle />
           <Link
             to="/login"
-            className="text-sm font-medium text-ink/70 hover:text-ink transition-colors dark:text-dark-ink-muted dark:hover:text-dark-ink"
+            className="text-sm font-medium text-ink/70 hover:text-ink transition-colors"
           >
             Sign in
           </Link>
@@ -82,21 +80,17 @@ export default function Navbar() {
 
       {open && (
         <div className="md:hidden">
-          <div className="mx-4 mb-3 rounded-2xl border border-ink/10 dark:border-dark-line bg-white dark:bg-dark-surface p-3 shadow-lg">
+          <div className="mx-4 mb-3 rounded-2xl border border-ink/10 bg-white p-3 shadow-lg">
             {links.map((l) => (
               <a
                 key={l.id}
                 href={`#${l.id}`}
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-4 py-3 text-sm font-medium text-ink/80 dark:text-dark-ink hover:bg-ink/5 dark:hover:bg-white/5"
+                className="block rounded-lg px-4 py-3 text-sm font-medium text-ink/80 hover:bg-ink/5"
               >
                 {l.label}
               </a>
             ))}
-            <div className="flex items-center justify-between mt-2 px-4 py-3">
-              <span className="text-xs text-ink-muted dark:text-dark-ink-muted">Dark mode</span>
-              <ThemeToggle />
-            </div>
             <a
               href="#cta"
               onClick={() => setOpen(false)}
@@ -107,6 +101,7 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
     </header>
   );
 }

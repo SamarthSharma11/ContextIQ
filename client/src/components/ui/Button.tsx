@@ -21,7 +21,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseClasses =
-    'inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] select-none';
+    'inline-flex items-center justify-center font-medium rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-coral-400 focus:ring-offset-2 dark:focus:ring-offset-dark-surface disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] select-none';
 
   const sizeClasses = {
     sm: 'px-3.5 py-1.5 text-xs gap-1.5',
@@ -32,9 +32,12 @@ export const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary:
       'bg-coral-500 hover:bg-coral-600 text-white shadow-sm hover:shadow hover:shadow-coral-500/20',
-    secondary: 'bg-white hover:bg-card text-ink border border-line shadow-sm',
-    outline: 'bg-transparent border border-ink/20 hover:border-ink/50 text-ink',
-    ghost: 'bg-transparent hover:bg-ink/5 text-ink-muted hover:text-ink',
+    secondary:
+      'bg-white dark:bg-dark-card hover:bg-card dark:hover:bg-dark-line text-ink dark:text-dark-ink border border-line dark:border-dark-line shadow-sm',
+    outline:
+      'bg-transparent border border-ink/20 dark:border-dark-line hover:border-ink/50 dark:hover:border-dark-ink-muted text-ink dark:text-dark-ink',
+    ghost:
+      'bg-transparent hover:bg-ink/5 dark:hover:bg-white/5 text-ink-muted dark:text-dark-ink-muted hover:text-ink dark:hover:text-dark-ink',
     danger: 'bg-red-500 hover:bg-red-600 text-white shadow-sm',
   };
 

@@ -64,13 +64,13 @@ export const Settings: React.FC = () => {
 
         {/* Danger Zone */}
         {user?.role === 'owner' && (
-          <div className="p-6 md:p-8 bg-rose-50/50 rounded-3xl border border-rose-200 space-y-4">
-            <div className="flex items-center gap-2 font-bold text-rose-700 text-sm">
+          <div className="p-6 md:p-8 bg-rose-50 dark:bg-rose-950/40 rounded-3xl border border-rose-200 dark:border-rose-800 space-y-4">
+            <div className="flex items-center gap-2 font-bold text-rose-700 dark:text-rose-400 text-sm">
               <AlertTriangle className="w-4 h-4" />
               <span>Danger Zone</span>
             </div>
 
-            <p className="text-xs text-rose-600/80 leading-relaxed">
+            <p className="text-xs text-rose-600 dark:text-rose-400/80 leading-relaxed">
               Deleting this workspace will permanently erase all uploaded knowledge documents,
               vector indexes, chat logs, team invites, and cancel billing subscriptions. This action
               cannot be undone.

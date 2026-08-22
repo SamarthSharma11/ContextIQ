@@ -9,12 +9,20 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    /* Smooth theme transitions */
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   body {
     background-color: #ECECEC;
     color: #17171A;
     font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* ── Dark mode body ── */
+  html.dark body {
+    background-color: #0E0E11;
+    color: #F0F0F5;
   }
 
   h1, h2, h3, .font-display {
@@ -35,10 +43,36 @@
 ::-webkit-scrollbar-thumb { background: #DCDCDC; border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #B8B8BD; }
 
+html.dark ::-webkit-scrollbar-thumb { background: #2B2B36; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #3A3A4A; }
+
 /* ─── Surface Tokens per Design Doc ─── */
 .bg-canvas   { background-color: #ECECEC; }
 .card-frame  { background: #F7F7F7; border: 1px solid #DCDCDC; border-radius: 1.5rem; }
 .surface-white { background: #FFFFFF; border: 1px solid rgba(23, 23, 26, 0.08); }
+
+/* Dark surface tokens */
+html.dark .bg-canvas    { background-color: #0E0E11; }
+html.dark .card-frame   { background: #1A1A22; border-color: #2B2B36; }
+html.dark .surface-white { background: #18181E; border-color: rgba(255,255,255,0.06); }
+
+/* ─── Tailwind bg-canvas, bg-card, bg-surface — dark overrides ─── */
+html.dark .bg-canvas  { background-color: #0E0E11 !important; }
+html.dark .bg-card    { background-color: #1A1A22 !important; }
+html.dark .bg-surface { background-color: #18181E !important; }
+
+/* ─── Text colour dark overrides ─── */
+html.dark .text-ink          { color: #F0F0F5 !important; }
+html.dark .text-ink-secondary { color: #C8C8D4 !important; }
+html.dark .text-ink-muted    { color: #9E9EA8 !important; }
+html.dark .text-ink-light    { color: #6B6B78 !important; }
+
+/* ─── Border dark overrides ─── */
+html.dark .border-line { border-color: #2B2B36 !important; }
+
+/* ─── Coral accent dark ─── */
+html.dark .bg-coral-50  { background-color: #2A1A19 !important; }
+html.dark .text-coral-600 { color: #FF7B73 !important; }
 
 /* ─── Card Hover Lift Micro-Animation ─── */
 .card-hover {
@@ -49,6 +83,9 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(23, 23, 26, 0.08);
 }
+html.dark .card-hover:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.40);
+}
 
 /* ─── Skeleton Loading Pulse ─── */
 .skeleton {
@@ -56,6 +93,10 @@
   background-size: 200% 100%;
   animation: skeleton-sweep 1.4s ease-in-out infinite;
   border-radius: 0.5rem;
+}
+html.dark .skeleton {
+  background: linear-gradient(90deg, #2B2B36 25%, #1A1A22 50%, #2B2B36 75%);
+  background-size: 200% 100%;
 }
 @keyframes skeleton-sweep {
   0%   { background-position: 200% 0; }
@@ -75,6 +116,9 @@
 .btn-coral-glow:hover {
   box-shadow: 0 4px 18px rgba(232, 103, 95, 0.35);
 }
+html.dark .btn-coral-glow:hover {
+  box-shadow: 0 4px 24px rgba(255, 107, 99, 0.45);
+}
 
 /* ─── Shimmer Text (re-used from landing) ─── */
 .shimmer-text {
@@ -85,8 +129,28 @@
   -webkit-text-fill-color: transparent;
   animation: shimmer 3s linear infinite;
 }
+html.dark .shimmer-text {
+  background: linear-gradient(90deg, #F0F0F5 0%, #FF6B63 50%, #F0F0F5 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 @keyframes shimmer {
   to { background-position: 200% center; }
+}
+
+/* ─── Input / Form dark ─── */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1A1A22;
+  border-color: #2B2B36;
+  color: #F0F0F5;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #6B6B78;
 }
 
 /* ─── Reduced Motion Overrides ─── */

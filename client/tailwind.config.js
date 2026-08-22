@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -24,6 +25,18 @@ export default {
           700: '#B83B33',
         },
         line: '#DCDCDC',
+        // Dark mode palette
+        dark: {
+          canvas: '#0E0E11',
+          card: '#1A1A22',
+          surface: '#18181E',
+          line: '#2B2B36',
+          ink: '#F0F0F5',
+          'ink-muted': '#9E9EA8',
+          'ink-light': '#6B6B78',
+          coral: '#FF6B63',
+          'coral-dim': '#2A1A19',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

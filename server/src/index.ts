@@ -32,7 +32,6 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow all origins for the chat widget endpoints, and clientUrl for dashboard
       callback(null, true);
     },
     credentials: true,
@@ -59,7 +58,7 @@ app.use('/api/', limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health Check
+// Health Check — responds immediately for Railway healthcheck
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -82,22 +81,34 @@ app.use('/api/billing', billingRoutes);
 // Global Error Handler
 app.use(errorHandler);
 
-// Start server
-async function start() {
-  await connectDB();
+// Global process error handlers
+process.on('unhandledRejection', (reason: any) => {
+  logger.error({ reason: reason?.message || reason }, '[Process] Unhandled Rejection');
+});
 
-  app.listen(config.port, () => {
-    logger.info(
-      {
-        port: config.port,
-        env: config.nodeEnv,
-        clientUrl: config.clientUrl,
-      },
-      `🚀 ContextIQ API Server started on port ${config.port}`
-    );
+process.on('uncaughtException', (error: Error) => {
+  logger.error({ error: error.message, stack: error.stack }, '[Process] Uncaught Exception');
+});
+
+// Start server listening on 0.0.0.0 with dynamic PORT from Railway
+const PORT = Number(process.env.PORT) || config.port || 5000;
+const HOST = '0.0.0.0';
+
+app.listen(PORT, HOST, () => {
+  logger.info(
+    {
+      port: PORT,
+      host: HOST,
+      env: config.nodeEnv,
+      clientUrl: config.clientUrl,
+    },
+    `🚀 ContextIQ API Server started on http://${HOST}:${PORT}`
+  );
+
+  // Connect to MongoDB asynchronously
+  connectDB().catch((err) => {
+    logger.error({ err: err.message }, '[Database] Initial connection error');
   });
-}
-
-start();
+});
 
 export default app;

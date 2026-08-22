@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
 import TrustStrip from '../components/landing/TrustStrip';
@@ -12,24 +12,29 @@ import Footer from '../components/landing/Footer';
 import { useReveal } from '../hooks/useReveal';
 
 /**
- * Landing page is ALWAYS rendered in light mode regardless of the user's
- * dark-mode preference. We achieve this by adding the `light` class to a
- * wrapper and unsetting the `.dark` scope from it via CSS.
+ * Landing page always renders in light mode.
+ * We temporarily remove .dark from <html> while mounted,
+ * and restore the user's saved preference on unmount.
  */
 export const Landing: React.FC = () => {
   useReveal();
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const hadDark = html.classList.contains('dark');
+    // Force light for landing
+    html.classList.remove('dark');
+
+    return () => {
+      // Restore when navigating away to the dashboard
+      if (hadDark) {
+        html.classList.add('dark');
+      }
+    };
+  }, []);
+
   return (
-    // Force light colour scheme — the `force-light` class resets all dark-mode
-    // CSS custom properties back to their light-mode values so the landing page
-    // is never affected by the user's dashboard theme preference.
-    <div
-      className="force-light min-h-screen font-sans"
-      style={{
-        backgroundColor: '#ECECEC',
-        color: '#17171A',
-      }}
-    >
+    <div className="min-h-screen bg-[#ECECEC] text-[#17171A] font-sans">
       <Navbar />
       <main>
         <Hero />

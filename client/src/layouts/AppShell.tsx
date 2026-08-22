@@ -18,7 +18,6 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 export const AppShell: React.FC = () => {
   const { user, tenant, logout } = useAuth();
@@ -92,29 +91,26 @@ export const AppShell: React.FC = () => {
   const isOverLimit = tenant.tokenUsed >= tenant.tokenLimit || tenant.status === 'paused';
 
   return (
-    <div className="min-h-screen bg-canvas dark:bg-dark-canvas flex flex-col md:flex-row text-ink dark:text-dark-ink antialiased">
+    <div className="min-h-screen bg-canvas flex flex-col md:flex-row text-ink antialiased">
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-surface dark:bg-dark-surface border-b border-line dark:border-dark-line">
+      <div className="md:hidden flex items-center justify-between p-4 bg-surface border-b border-line">
         <div className="flex items-center gap-2">
           <img src="/logo-icon.png" alt="ContextIQ" className="w-8 h-8 rounded-xl object-contain shadow-sm" />
-          <span className="font-bold text-ink dark:text-dark-ink font-display">{tenant.name}</span>
+          <span className="font-bold text-ink font-display">{tenant.name}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <button
-            onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="p-2 rounded-lg text-ink-muted dark:text-dark-ink-muted hover:text-ink dark:hover:text-dark-ink"
-          >
-            {mobileNavOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        <button
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          className="p-2 rounded-lg text-ink-muted hover:text-ink"
+        >
+          {mobileNavOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
       {/* Persistent Sidebar */}
       <aside
         className={`${
           mobileNavOpen ? 'block' : 'hidden'
-        } md:flex flex-col w-full md:w-64 bg-surface dark:bg-dark-surface border-r border-line dark:border-dark-line shrink-0 p-5 z-40`}
+        } md:flex flex-col w-full md:w-64 bg-surface border-r border-line shrink-0 p-5 z-40`}
       >
         {/* Workspace Brand Block */}
         <div className="pb-5 mb-5 border-b border-line">
@@ -196,16 +192,13 @@ export const AppShell: React.FC = () => {
               <div className="text-[10px] text-ink-muted capitalize">{user.role}</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <ThemeToggle />
-            <button
-              onClick={logout}
-              className="p-1.5 rounded-lg text-ink-muted hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors"
-              title="Sign out"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={logout}
+            className="p-1.5 rounded-lg text-ink-muted hover:text-rose-600 hover:bg-rose-50 transition-colors"
+            title="Sign out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </aside>
 

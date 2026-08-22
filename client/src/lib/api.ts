@@ -1,3 +1,4 @@
+// Dynamically resolve API URL across local dev, Vercel, and Railway
 const getApiBase = (): string => {
   const env = (import.meta as any).env;
   if (env && env.VITE_API_URL) {
@@ -5,13 +6,15 @@ const getApiBase = (): string => {
     return raw.endsWith('/api') ? raw : `${raw}/api`;
   }
 
-  // When deployed on Vercel or any non-localhost domain
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'https://contextiq-server-production.up.railway.app/api';
+  // When running in the browser on Vercel or any non-localhost domain
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return '/api';
+    }
   }
 
-  // Local development fallback
-  return '/api';
+  return 'https://contextiq-server-production.up.railway.app/api';
 };
 
 const API_BASE = getApiBase();
@@ -42,7 +45,8 @@ export async function apiRequest<T = any>(
     headers['Content-Type'] = 'application/json';
   }
 
-  const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE}${cleanEndpoint}`;
 
   try {
     const response = await fetch(url, {
@@ -66,6 +70,8 @@ export async function apiRequest<T = any>(
         data.error ||
         (response.status === 404
           ? 'Backend endpoint not found. Please check server status.'
+          : response.status === 405
+          ? 'Method not allowed. Please refresh your browser.'
           : response.status === 500
           ? 'Server error occurred during request.'
           : `Request failed with status ${response.status}`);
@@ -77,9 +83,8 @@ export async function apiRequest<T = any>(
     if (err instanceof ApiError) {
       throw err;
     }
-    // Network / CORS / unreachable error
     throw new ApiError(
-      err.message || 'Unable to connect to the backend server. Please verify your internet connection or server status.',
+      err.message || 'Unable to connect to the backend server. Please check your internet connection.',
       0
     );
   }

@@ -28,15 +28,17 @@ app.use(
   })
 );
 
-// CORS setup (allow dashboard client and external embeds)
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      callback(null, true);
-    },
-    credentials: true,
-  })
-);
+// CORS setup (allow all origins, credentials, and methods for dashboard & widgets)
+const corsOptions: cors.CorsOptions = {
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id', 'X-Tenant-Id', 'X-Requested-With'],
+  exposedHeaders: ['X-Request-Id', 'RateLimit-Limit', 'RateLimit-Remaining', 'RateLimit-Reset'],
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 
 // Structured Request Logging per TRD §11 (RequestId, Latency, TenantId, StatusCode)
 app.use(requestLogger);

@@ -1,5 +1,5 @@
-// Production Railway Backend Endpoint
-const PRODUCTION_API_URL = 'https://contextiq-server-production.up.railway.app/api';
+// Production Railway Backend Endpoint with guaranteed https:// protocol
+const DEFAULT_PRODUCTION_API_URL = 'https://contextiq-server-production.up.railway.app/api';
 
 const getApiBase = (): string => {
   // Check if running on localhost for dev proxy
@@ -10,15 +10,18 @@ const getApiBase = (): string => {
     }
   }
 
-  // Check explicit env override if provided
+  // Check explicit env override if provided (e.g. from Vercel env vars)
   const env = (import.meta as any).env;
   if (env && env.VITE_API_URL) {
-    const raw = String(env.VITE_API_URL).replace(/\/+$/, '');
+    let raw = String(env.VITE_API_URL).trim().replace(/\/+$/, '');
+    // Ensure protocol is always present
+    if (!raw.startsWith('http://') && !raw.startsWith('https://')) {
+      raw = `https://${raw}`;
+    }
     return raw.endsWith('/api') ? raw : `${raw}/api`;
   }
 
-  // Production fallback directly to Railway
-  return PRODUCTION_API_URL;
+  return DEFAULT_PRODUCTION_API_URL;
 };
 
 const API_BASE = getApiBase();

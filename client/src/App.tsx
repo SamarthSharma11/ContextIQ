@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppShell } from './layouts/AppShell';
 
+// Marketing Landing Page
+import { Landing } from './pages/Landing';
+
 // Auth Pages
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
@@ -67,8 +70,8 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Auth Routes */}
-          <Route path="/" element={<RootRedirect />} />
+          {/* Public Landing & Auth Routes */}
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 

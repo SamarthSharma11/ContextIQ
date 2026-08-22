@@ -1,12 +1,8 @@
-// Dynamically resolve API URL across local dev, Vercel, and Railway
-const getApiBase = (): string => {
-  const env = (import.meta as any).env;
-  if (env && env.VITE_API_URL) {
-    const raw = String(env.VITE_API_URL).replace(/\/+$/, '');
-    return raw.endsWith('/api') ? raw : `${raw}/api`;
-  }
+// Production Railway Backend Endpoint
+const PRODUCTION_API_URL = 'https://contextiq-server-production.up.railway.app/api';
 
-  // When running in the browser on Vercel or any non-localhost domain
+const getApiBase = (): string => {
+  // Check if running on localhost for dev proxy
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;
     if (host === 'localhost' || host === '127.0.0.1') {
@@ -14,7 +10,15 @@ const getApiBase = (): string => {
     }
   }
 
-  return 'https://contextiq-server-production.up.railway.app/api';
+  // Check explicit env override if provided
+  const env = (import.meta as any).env;
+  if (env && env.VITE_API_URL) {
+    const raw = String(env.VITE_API_URL).replace(/\/+$/, '');
+    return raw.endsWith('/api') ? raw : `${raw}/api`;
+  }
+
+  // Production fallback directly to Railway
+  return PRODUCTION_API_URL;
 };
 
 const API_BASE = getApiBase();
@@ -84,7 +88,7 @@ export async function apiRequest<T = any>(
       throw err;
     }
     throw new ApiError(
-      err.message || 'Unable to connect to the backend server. Please check your internet connection.',
+      err.message || 'Unable to connect to backend server. Please check your internet connection.',
       0
     );
   }

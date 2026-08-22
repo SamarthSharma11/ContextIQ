@@ -1,4 +1,20 @@
-const API_BASE = '/api';
+const getApiBase = (): string => {
+  const env = (import.meta as any).env;
+  if (env && env.VITE_API_URL) {
+    const raw = String(env.VITE_API_URL).replace(/\/+$/, '');
+    return raw.endsWith('/api') ? raw : `${raw}/api`;
+  }
+
+  // When deployed on Vercel or any non-localhost domain
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://contextiq-server-production.up.railway.app/api';
+  }
+
+  // Local development fallback
+  return '/api';
+};
+
+const API_BASE = getApiBase();
 
 export class ApiError extends Error {
   status: number;
@@ -26,24 +42,45 @@ export async function apiRequest<T = any>(
     headers['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  const url = `${API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
-  if (response.status === 401) {
-    // If unauthorized, clear token and trigger auth redirect if on dashboard
-    if (window.location.pathname.startsWith('/app')) {
-      localStorage.removeItem('contextiq_token');
-      window.location.href = '/login';
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401) {
+      if (window.location.pathname.startsWith('/app')) {
+        localStorage.removeItem('contextiq_token');
+        window.location.href = '/login';
+      }
     }
+
+    const contentType = response.headers.get('content-type');
+    const isJson = contentType && contentType.includes('application/json');
+    const data = isJson ? await response.json().catch(() => ({})) : {};
+
+    if (!response.ok) {
+      const errorMsg =
+        data.error ||
+        (response.status === 404
+          ? 'Backend endpoint not found. Please check server status.'
+          : response.status === 500
+          ? 'Server error occurred during request.'
+          : `Request failed with status ${response.status}`);
+      throw new ApiError(errorMsg, response.status);
+    }
+
+    return data as T;
+  } catch (err: any) {
+    if (err instanceof ApiError) {
+      throw err;
+    }
+    // Network / CORS / unreachable error
+    throw new ApiError(
+      err.message || 'Unable to connect to the backend server. Please verify your internet connection or server status.',
+      0
+    );
   }
-
-  const data = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new ApiError(data.error || 'An unexpected error occurred', response.status);
-  }
-
-  return data as T;
 }

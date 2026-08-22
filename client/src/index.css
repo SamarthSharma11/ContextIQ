@@ -35,6 +35,70 @@
 ::-webkit-scrollbar-thumb { background: #DCDCDC; border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #B8B8BD; }
 
+/* ─── Reveal-on-scroll ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal-left.is-visible,
+.reveal-right.is-visible,
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* ─── Mascot 3D stage ─── */
+.mascot-stage {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* ─── Grid background & Spotlight ─── */
+.grid-bg {
+  background-image: linear-gradient(to right, rgba(23, 23, 26, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(23, 23, 26, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.spotlight {
+  background: radial-gradient(60% 50% at 50% 35%, rgba(232, 103, 95, 0.12), transparent 70%);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(23, 23, 26, 0.08);
+}
+
 /* ─── Surface Tokens per Design Doc ─── */
 .bg-canvas   { background-color: #ECECEC; }
 .card-frame  { background: #F7F7F7; border: 1px solid #DCDCDC; border-radius: 1.5rem; }
@@ -76,7 +140,7 @@
   box-shadow: 0 4px 18px rgba(232, 103, 95, 0.35);
 }
 
-/* ─── Shimmer Text (re-used from landing) ─── */
+/* ─── Shimmer Text ─── */
 .shimmer-text {
   background: linear-gradient(90deg, #17171A 0%, #E8675F 50%, #17171A 100%);
   background-size: 200% auto;
@@ -91,11 +155,28 @@
 
 /* ─── Reduced Motion Overrides ─── */
 @media (prefers-reduced-motion: reduce) {
+  .animate-floatY,
+  .animate-bobHead,
+  .animate-blinkEye,
+  .animate-glowPulse,
+  .animate-spinSlow,
+  .animate-shimmer,
+  .animate-wave,
+  .animate-ringPulse,
+  .animate-marquee,
   .animate-in,
   .card-hover,
   .skeleton,
   .shimmer-text {
     animation: none !important;
     transition: none !important;
+  }
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

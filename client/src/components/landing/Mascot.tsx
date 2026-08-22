@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type MascotProps = {
   /** initial expression shown on mount */
@@ -7,8 +7,7 @@ type MascotProps = {
 };
 
 /**
- * A lightweight CSS/SVG "3D" robot mascot.
- * Pure CSS transforms + SVG give a convincing dimensional feel without a WebGL dependency.
+ * A lightweight CSS/SVG "3D" robot mascot with floating, bobbing, and blinking animations.
  */
 export default function Mascot({ expression = 'smile', className = '' }: MascotProps) {
   const [face, setFace] = useState<'neutral' | 'smile' | 'think' | 'speak'>(expression);
@@ -26,16 +25,6 @@ export default function Mascot({ expression = 'smile', className = '' }: MascotP
 
   return (
     <div className={`mascot-stage relative ${className}`}>
-      {/* Ambient glow */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-coral-400/40 animate-glowPulse" />
-
-      {/* Pulse rings */}
-      <div className="pointer-events-none absolute left-1/2 top-[58%] -z-10 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-coral-300/60 animate-ringPulse" />
-      <div
-        className="pointer-events-none absolute left-1/2 top-[58%] -z-10 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-coral-300/40 animate-ringPulse"
-        style={{ animationDelay: '1.3s' }}
-      />
-
       <div className="animate-floatY">
         <Robot face={face} />
       </div>
@@ -126,7 +115,7 @@ function Robot({
       <g
         className="animate-bobHead"
         style={{ transformOrigin: '130px 120px' }}
->
+      >
         <rect x="60" y="44" width="140" height="150" rx="46" fill="url(#headGrad)" />
         <rect x="60" y="44" width="140" height="150" rx="46" fill="none" stroke="#3a3a3a" strokeWidth="1.5" />
 

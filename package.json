@@ -15,5 +15,8 @@
     "server",
     "client",
     "widget"
-  ]
+  ],
+  "dependencies": {
+    "typescript": "^5.8.2"
+  }
 }

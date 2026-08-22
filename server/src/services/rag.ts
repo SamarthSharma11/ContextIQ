@@ -5,6 +5,8 @@ import { Message, ICitedSource } from '../models/Message';
 import { UsageEvent } from '../models/UsageEvent';
 import { generateEmbedding, generateChatCompletion } from './gemini';
 import { querySimilarVectors } from './pinecone';
+import { getCache, setCache } from './redis';
+import crypto from 'crypto';
 
 export interface RAGQueryOptions {
   tenantId: Types.ObjectId;
@@ -28,8 +30,13 @@ export async function executeRAGQuery(options: RAGQueryOptions): Promise<RAGResp
   const startTime = Date.now();
   const { tenantId, sessionId, userMessage, topK = 4 } = options;
 
-  // 1. Fetch Tenant & check status and token limits
-  const tenant = await Tenant.findById(tenantId);
+  // 1. Fetch Tenant with Redis cache (60s TTL) to avoid repeated DB hits on every message
+  const tenantCacheKey = `tenant:${tenantId.toString()}`;
+  let tenant = await getCache<any>(tenantCacheKey);
+  if (!tenant) {
+    tenant = await Tenant.findById(tenantId).lean();
+    if (tenant) await setCache(tenantCacheKey, tenant, 60);
+  }
   if (!tenant) {
     throw new Error('Tenant not found');
   }
@@ -64,8 +71,17 @@ export async function executeRAGQuery(options: RAGQueryOptions): Promise<RAGResp
     content: userMessage,
   });
 
-  // 3. Embed user question
-  const queryVector = await generateEmbedding(userMessage);
+  // 3. Embed user question — check Redis vector cache first (1h TTL)
+  // Cache key is a hash of tenant + message to ensure isolation
+  const embeddingCacheKey = `emb:${tenantId.toString()}:${crypto
+    .createHash('md5')
+    .update(userMessage.toLowerCase().trim())
+    .digest('hex')}`;
+  let queryVector = await getCache<number[]>(embeddingCacheKey);
+  if (!queryVector) {
+    queryVector = await generateEmbedding(userMessage);
+    await setCache(embeddingCacheKey, queryVector, 3600); // 1h TTL
+  }
 
   // 4. Query Pinecone namespace
   const matches = await querySimilarVectors(tenant.pineconeNamespace, queryVector, topK);

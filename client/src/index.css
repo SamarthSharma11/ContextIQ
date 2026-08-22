@@ -1,8 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: #ECECEC;
     color: #17171A;
@@ -12,36 +20,82 @@
   h1, h2, h3, .font-display {
     font-family: 'Poppins', 'Inter', system-ui, sans-serif;
   }
+
+  /* Accessible focus rings for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid #E8675F;
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
 }
 
-/* Custom smooth scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ─── Smooth Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #DCDCDC; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #B8B8BD; }
+
+/* ─── Surface Tokens per Design Doc ─── */
+.bg-canvas   { background-color: #ECECEC; }
+.card-frame  { background: #F7F7F7; border: 1px solid #DCDCDC; border-radius: 1.5rem; }
+.surface-white { background: #FFFFFF; border: 1px solid rgba(23, 23, 26, 0.08); }
+
+/* ─── Card Hover Lift Micro-Animation ─── */
+.card-hover {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #DCDCDC;
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #B8B8BD;
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(23, 23, 26, 0.08);
 }
 
-/* Card & Surface styles per Design Doc */
-.bg-canvas {
-  background-color: #ECECEC;
+/* ─── Skeleton Loading Pulse ─── */
+.skeleton {
+  background: linear-gradient(90deg, #DCDCDC 25%, #ECECEC 50%, #DCDCDC 75%);
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+@keyframes skeleton-sweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-.card-frame {
-  background: #F7F7F7;
-  border: 1px solid #DCDCDC;
-  border-radius: 1.5rem;
+/* ─── Fade-in / Slide-up Entry ─── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.surface-white {
-  background: #FFFFFF;
-  border: 1px solid rgba(23, 23, 26, 0.08);
+/* ─── Coral Button Glow on Hover ─── */
+.btn-coral-glow:hover {
+  box-shadow: 0 4px 18px rgba(232, 103, 95, 0.35);
+}
+
+/* ─── Shimmer Text (re-used from landing) ─── */
+.shimmer-text {
+  background: linear-gradient(90deg, #17171A 0%, #E8675F 50%, #17171A 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: 200% center; }
+}
+
+/* ─── Reduced Motion Overrides ─── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .card-hover,
+  .skeleton,
+  .shimmer-text {
+    animation: none !important;
+    transition: none !important;
+  }
 }

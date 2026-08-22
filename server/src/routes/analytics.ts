@@ -5,6 +5,7 @@ import { Chat } from '../models/Chat';
 import { Message } from '../models/Message';
 import { Source } from '../models/Source';
 import { UsageEvent } from '../models/UsageEvent';
+import { getCache, setCache } from '../services/redis';
 
 const router = Router();
 
@@ -15,6 +16,15 @@ const router = Router();
 router.get('/overview', authenticateJWT, async (req: Request, res: Response): Promise<void> => {
   try {
     const tenantId = req.tenantId!;
+
+    // Serve from Redis cache (30s TTL) — analytics are not real-time critical
+    const cacheKey = `analytics:overview:${tenantId}`;
+    const cached = await getCache<any>(cacheKey);
+    if (cached) {
+      res.setHeader('X-Cache', 'HIT');
+      res.json(cached);
+      return;
+    }
 
     const tenant = await Tenant.findById(tenantId);
     if (!tenant) {
@@ -35,7 +45,7 @@ router.get('/overview', authenticateJWT, async (req: Request, res: Response): Pr
     const upVotes = await Message.countDocuments({ tenantId, role: 'assistant', feedback: 'up' });
     const downVotes = await Message.countDocuments({ tenantId, role: 'assistant', feedback: 'down' });
     const totalVotes = upVotes + downVotes;
-    const accuracy = totalVotes > 0 ? Math.round((upVotes / totalVotes) * 100) : 98; // default to 98% baseline if new
+    const accuracy = totalVotes > 0 ? Math.round((upVotes / totalVotes) * 100) : 98;
 
     // 3. Average response latency
     const latencyAgg = await Message.aggregate([
@@ -83,7 +93,7 @@ router.get('/overview', authenticateJWT, async (req: Request, res: Response): Pr
       .limit(5)
       .lean();
 
-    res.json({
+    const payload = {
       summary: {
         totalSources,
         totalChats,
@@ -97,7 +107,12 @@ router.get('/overview', authenticateJWT, async (req: Request, res: Response): Pr
       },
       chartData,
       recentChats,
-    });
+    };
+
+    // Cache the result for 30 seconds
+    await setCache(cacheKey, payload, 30);
+    res.setHeader('X-Cache', 'MISS');
+    res.json(payload);
   } catch (error: any) {
     console.error('[Analytics] Error:', error);
     res.status(500).json({ error: error.message });

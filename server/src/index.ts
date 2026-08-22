@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { RedisRateLimitStore } from './services/rateLimitStore';
+import { logger } from './services/logger';
+import { requestLogger } from './middleware/requestLogger';
 import { config } from './config/env';
 import { connectDB } from './config/db';
 import { errorHandler } from './middleware/errorHandler';
@@ -37,13 +39,16 @@ app.use(
   })
 );
 
+// Structured Request Logging per TRD §11 (RequestId, Latency, TenantId, StatusCode)
+app.use(requestLogger);
+
 // Distributed rate limiter — shared across all Railway instances via Redis.
 // Falls back gracefully to in-memory when REDIS_URL is not set.
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const limiter = rateLimit({
   windowMs: WINDOW_MS,
   max: 1000,
-  standardHeaders: true,  // return RateLimit-* headers per RFC 6585
+  standardHeaders: true, // return RateLimit-* headers per RFC 6585
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
   store: new RedisRateLimitStore({ prefix: 'rl:api:', windowMs: WINDOW_MS }),
@@ -61,6 +66,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     service: 'ContextIQ API Server',
     environment: config.nodeEnv,
+    requestId: req.requestId,
   });
 });
 
@@ -81,10 +87,14 @@ async function start() {
   await connectDB();
 
   app.listen(config.port, () => {
-    console.log(`=========================================`);
-    console.log(`🚀 ContextIQ Server running on port ${config.port}`);
-    console.log(`🌐 Health check: http://localhost:${config.port}/health`);
-    console.log(`=========================================`);
+    logger.info(
+      {
+        port: config.port,
+        env: config.nodeEnv,
+        clientUrl: config.clientUrl,
+      },
+      `🚀 ContextIQ API Server started on port ${config.port}`
+    );
   });
 }
 

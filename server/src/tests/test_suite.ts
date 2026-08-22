@@ -100,6 +100,17 @@ async function main() {
     assert.strictEqual(getRes?.totalHits, 1, 'Hit count after decrement should be 1');
   });
 
+  console.log('\n📝 6. Structured Logger & Request Context:');
+  await runTest('Should instantiate Pino structured logger and bind tenant child context', async () => {
+    const { logger, getTenantLogger } = await import('../services/logger');
+    assert(typeof logger.info === 'function', 'Logger must have info method');
+    assert(typeof logger.error === 'function', 'Logger must have error method');
+
+    const tenantLog = getTenantLogger('tenant_12345', { requestId: 'req_abcde' });
+    assert(typeof tenantLog.info === 'function', 'Child tenant logger must have info method');
+    assert(typeof tenantLog.child === 'function', 'Child tenant logger must have child method');
+  });
+
   console.log('\n=========================================');
   console.log(`📊 Test Results: ${passed} Passed, ${failed} Failed`);
   console.log('=========================================\n');

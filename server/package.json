@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "ContextIQ API server — RAG pipeline, auth, multi-tenancy",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",

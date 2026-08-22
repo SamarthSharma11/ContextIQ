@@ -3,6 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "description": "ContextIQ — Multi-tenant SaaS Platform for Custom AI Chatbots",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev:server": "cd server && npm run dev",
     "dev:client": "cd client && npm run dev",

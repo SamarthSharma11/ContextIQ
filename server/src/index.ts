@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { RedisRateLimitStore } from './services/rateLimitStore';
 import { config } from './config/env';
 import { connectDB } from './config/db';
 import { errorHandler } from './middleware/errorHandler';
@@ -36,11 +37,16 @@ app.use(
   })
 );
 
-// Rate limiter for API
+// Distributed rate limiter — shared across all Railway instances via Redis.
+// Falls back gracefully to in-memory when REDIS_URL is not set.
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
+  windowMs: WINDOW_MS,
   max: 1000,
+  standardHeaders: true,  // return RateLimit-* headers per RFC 6585
+  legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' },
+  store: new RedisRateLimitStore({ prefix: 'rl:api:', windowMs: WINDOW_MS }),
 });
 app.use('/api/', limiter);
 

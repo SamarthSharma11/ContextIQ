@@ -83,6 +83,23 @@ async function main() {
     assert.strictEqual(isOverLimit, true, 'Should trigger auto-pause when limit exceeded');
   });
 
+  console.log('\n🚦 5. Distributed Rate Limiter Store:');
+  await runTest('Should track and increment distributed rate limit hits across requests', async () => {
+    const { RedisRateLimitStore } = await import('../services/rateLimitStore');
+    const store = new RedisRateLimitStore({ prefix: 'rl:test:', windowMs: 60000 });
+    const ipKey = '192.168.1.100';
+
+    const res1 = await store.increment(ipKey);
+    assert.strictEqual(res1.totalHits, 1, 'First request hit count should be 1');
+
+    const res2 = await store.increment(ipKey);
+    assert.strictEqual(res2.totalHits, 2, 'Second request hit count should be 2');
+
+    await store.decrement(ipKey);
+    const getRes = await store.get(ipKey);
+    assert.strictEqual(getRes?.totalHits, 1, 'Hit count after decrement should be 1');
+  });
+
   console.log('\n=========================================');
   console.log(`📊 Test Results: ${passed} Passed, ${failed} Failed`);
   console.log('=========================================\n');
